@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="id" data-theme="dark" data-program="bulking">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <meta name="theme-color" content="#0F172A" id="meta-theme-color" />
+  <meta name="description" content="Pelacak progres latihan gym & workout offline untuk program Bulking dan Diet." />
+  
+  <!-- Konfigurasi PWA & iOS Safari -->
+  <link rel="manifest" href="./manifest.json" />
+  <link rel="apple-touch-icon" href="./icons/icon-192.png" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+
+  <title>IronTrack — Gym & Workout Tracker</title>
+  <link rel="stylesheet" href="./css/style.css" />
+</head>
+<body>
+
+  <!-- ================= HEADER ================= -->
+  <header class="app-header">
+    <div class="header-top">
+      <div class="brand">
+        <div class="brand-icon" aria-hidden="true">
+          <!-- Ikon Barbel -->
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M6.5 6.5h11M6.5 17.5h11M3 10v4M21 10v4M6 8v8M18 8v8M9 12h6"/>
+          </svg>
+        </div>
+        <div>
+          <h1 class="brand-title">IronTrack</h1>
+          <span class="offline-badge" id="offline-status">
+            <span class="status-dot"></span> Siap Offline
+          </span>
+        </div>
+      </div>
+
+      <!-- Tombol Toggle Tema Gelap / Terang -->
+      <button type="button" class="icon-btn theme-toggle" id="btn-theme-toggle" aria-label="Ganti Tema Gelap atau Terang" title="Ganti Tema">
+        <!-- Ikon Matahari (tampil saat mode gelap) -->
+        <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/>
+        </svg>
+        <!-- Ikon Bulan (tampil saat mode terang) -->
+        <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/>
+        </svg>
+      </button>
+    </div>
+
+    <!-- Switcher Mode Program: Bulking vs Diet -->
+    <div class="program-switcher" role="group" aria-label="Pilih Mode Program">
+      <button type="button" class="program-btn active" data-program-choice="bulking" id="btn-mode-bulking">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"/>
+        </svg>
+        <span>Bulking (Massa Otot)</span>
+      </button>
+      <button type="button" class="program-btn" data-program-choice="diet" id="btn-mode-diet">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/>
+        </svg>
+        <span>Diet (Fat Loss)</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- ================= KONTEN UTAMA ================= -->
+  <main class="app-main">
+
+    <!-- Banner Panduan Dinamis Sesuai Program -->
+    <section class="program-banner" id="program-banner">
+      <div class="banner-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>
+        </svg>
+      </div>
+      <div class="banner-text">
+        <strong id="banner-title">Fokus Bulking: Progressive Overload</strong>
+        <p id="banner-desc">Targetkan kenaikan beban bertahap atau tambah 1–2 repetisi dari sesi sebelumnya.</p>
+      </div>
+    </section>
+
+    <!-- ============ TAB 1: LATIHAN (WORKOUT LOGGER) ============ -->
+    <section class="tab-view active" id="view-workout" aria-labelledby="nav-workout">
+      
+      <!-- Pengaturan Sesi Hari Ini -->
+      <div class="card session-setup-card">
+        <div class="card-header-row">
+          <h2 class="section-title">Sesi Latihan Hari Ini</h2>
+          <span class="date-pill" id="today-date-label">Hari Ini</span>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group flex-1">
+            <label for="session-split">Kategori / Split Latihan</label>
+            <select id="session-split" class="input-control">
+              <option value="Push (Chest, Shoulder, Triceps)">Push (Chest, Shoulder, Triceps)</option>
+              <option value="Pull (Back, Biceps, Rear Delt)">Pull (Back, Biceps, Rear Delt)</option>
+              <option value="Legs (Quads, Hamstring, Calves)">Legs (Quads, Hamstring, Calves)</option>
+              <option value="Upper Body">Upper Body</option>
+              <option value="Lower Body">Lower Body</option>
+              <option value="Full Body">Full Body</option>
+              <option value="Custom">Lainnya (Kustom)</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Aksi Cepat: Copy Last Session & Tambah Gerakan -->
+        <div class="action-bar-row">
+          <button type="button" class="btn btn-secondary btn-sm" id="btn-copy-last">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
+            </svg>
+            <span>Salin Sesi Terakhir</span>
+          </button>
+
+          <button type="button" class="btn btn-primary btn-sm" id="btn-open-add-exercise">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
+            </svg>
+            <span>Tambah Gerakan</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Ringkasan Live Sesi Berjalan -->
+      <div class="live-stats-grid">
+        <div class="stat-chip">
+          <span class="stat-label">Total Gerakan</span>
+          <strong class="stat-value" id="live-total-exercises">0</strong>
+        </div>
+        <div class="stat-chip">
+          <span class="stat-label">Total Set</span>
+          <strong class="stat-value" id="live-total-sets">0</strong>
+        </div>
+        <div class="stat-chip">
+          <span class="stat-label">Total Volume</span>
+          <strong class="stat-value" id="live-total-volume">0 kg</strong>
+        </div>
+      </div>
+
+      <!-- Daftar Kartu Gerakan Aktif (Di-render via JS) -->
+      <div id="active-exercises-container" class="exercises-list">
+        <!-- Empty state awal -->
+        <div class="empty-state" id="workout-empty-state">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M6.5 6.5h11M6.5 17.5h11M3 10v4M21 10v4M6 8v8M18 8v8M9 12h6"/>
+          </svg>
+          <h3>Belum ada gerakan di sesi ini</h3>
+          <p>Klik <strong>Tambah Gerakan</strong> atau <strong>Salin Sesi Terakhir</strong> untuk mulai mencatat beban dan repetisi.</p>
+        </div>
+      </div>
+
+      <!-- Tombol Selesaikan & Simpan Sesi ke Riwayat -->
+      <div class="finish-session-wrapper hidden" id="finish-session-box">
+        <div class="form-group">
+          <label for="session-notes">Catatan Sesi (Opsional)</label>
+          <input type="text" id="session-notes" class="input-control" placeholder="Misal: Energi bagus, tidur cukup, pump maksimal..." />
+        </div>
+        <button type="button" class="btn btn-success btn-block" id="btn-finish-session">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="20 6 9 17 4 12"/>
+          </svg>
+          <span>Selesai & Simpan ke Riwayat</span>
+        </button>
+      </div>
+    </section>
+
+    <!-- ============ TAB 2: RIWAYAT (HISTORY) ============ -->
+    <section class="tab-view" id="view-history" aria-labelledby="nav-history">
+      <div class="section-header-flex">
+        <h2 class="section-title">Riwayat Latihan</h2>
+        <select id="history-filter-split" class="input-control input-sm">
+          <option value="ALL">Semua Split</option>
+          <option value="Push (Chest, Shoulder, Triceps)">Push</option>
+          <option value="Pull (Back, Biceps, Rear Delt)">Pull</option>
+          <option value="Legs (Quads, Hamstring, Calves)">Legs</option>
+          <option value="Upper Body">Upper Body</option>
+          <option value="Lower Body">Lower Body</option>
+          <option value="Full Body">Full Body</option>
+        </select>
+      </div>
+
+      <div id="history-list-container" class="history-list">
+        <!-- Daftar riwayat sesi akan di-render oleh JS -->
+      </div>
+    </section>
+
+    <!-- ============ TAB 3: PROGRES & REKOR PR ============ -->
+    <section class="tab-view" id="view-progress" aria-labelledby="nav-progress">
+      <div class="card">
+        <h2 class="section-title">Analisis Progres Gerakan</h2>
+        <div class="form-group">
+          <label for="progress-exercise-select">Pilih Gerakan untuk Melihat Grafik</label>
+          <select id="progress-exercise-select" class="input-control">
+            <option value="">-- Belum ada data gerakan --</option>
+          </select>
+        </div>
+
+        <!-- Kartu Rekor Pribadi (Personal Record) -->
+        <div class="pr-highlight-grid" id="pr-cards-grid">
+          <div class="pr-card pr-weight">
+            <div class="pr-icon">
+              <!-- Ikon Piala -->
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"/><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"/>
+              </svg>
+            </div>
+            <div>
+              <span class="pr-label">Beban Tertinggi (PR)</span>
+              <strong class="pr-val" id="stat-max-weight">0 kg</strong>
+            </div>
+          </div>
+
+          <div class="pr-card pr-volume">
+            <div class="pr-icon">
+              <!-- Ikon Petir / Volume -->
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/>
+              </svg>
+            </div>
+            <div>
+              <span class="pr-label">Volume Sesi Terbaik</span>
+              <strong class="pr-val" id="stat-max-volume">0 kg</strong>
+            </div>
+          </div>
+        </div>
+
+        <!-- Grafik Batang Visual Berwarna -->
+        <div class="chart-wrapper">
+          <h3 class="chart-title">Tren Beban Tertinggi per Sesi (kg)</h3>
+          <div class="bar-chart-container" id="progress-bar-chart">
+            <p class="muted-text">Pilih gerakan yang sudah memiliki riwayat latihan untuk menampilkan grafik.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ TAB 4: PENGATURAN & BACKUP DATA ============ -->
+    <section class="tab-view" id="view-settings" aria-labelledby="nav-settings">
+      <div class="card">
+        <h2 class="section-title">Cadangan & Memori Lokal</h2>
+        <p class="card-desc">Semua data latihanmu tersimpan secara lokal di perangkat ini. Lakukan ekspor berkala agar data aman saat ganti HP atau membersihkan browser.</p>
+
+        <div class="settings-actions">
+          <button type="button" class="btn btn-primary btn-block" id="btn-export-json">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/>
+            </svg>
+            <span>Export Data (Unduh JSON)</span>
+          </button>
+
+          <label for="input-import-json" class="btn btn-secondary btn-block file-upload-btn">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/>
+            </svg>
+            <span>Import Data (Pulihkan JSON)</span>
+            <input type="file" id="input-import-json" accept=".json,application/json" hidden />
+          </label>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2 class="section-title">Default Rest Timer</h2>
+        <p class="card-desc">Pilih durasi jeda istirahat otomatis setiap kali kamu selesai menyimpan satu set.</p>
+        <div class="timer-preset-row">
+          <button type="button" class="chip-btn active" data-default-rest="60">60 Detik</button>
+          <button type="button" class="chip-btn" data-default-rest="90">90 Detik</button>
+          <button type="button" class="chip-btn" data-default-rest="120">120 Detik</button>
+          <button type="button" class="chip-btn" data-default-rest="180">3 Menit</button>
+        </div>
+      </div>
+
+      <div class="card danger-zone-card">
+        <h2 class="section-title text-danger">Zona Berbahaya</h2>
+        <p class="card-desc">Menghapus seluruh catatan riwayat latihan di penyimpanan lokal browser ini secara permanen.</p>
+        <button type="button" class="btn btn-danger btn-block" id="btn-clear-all-data">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
+          </svg>
+          <span>Hapus Semua Data Lokal</span>
+        </button>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ================= FLOATING REST TIMER BAR ================= -->
+  <aside class="rest-timer-bar" id="rest-timer-bar" aria-label="Pengatur Waktu Istirahat">
+    <div class="timer-display-group">
+      <svg class="timer-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="12" cy="13" r="8"/><path d="M12 9v4l2 2"/><path d="M5 3 2 6"/><path d="m22 6-3-3"/><path d="M12 2v3"/>
+      </svg>
+      <div>
+        <span class="timer-label">Istirahat Set</span>
+        <strong class="timer-clock" id="timer-clock">01:30</strong>
+      </div>
+    </div>
+
+    <div class="timer-controls">
+      <button type="button" class="timer-btn" data-timer-set="60">60d</button>
+      <button type="button" class="timer-btn" data-timer-set="90">90d</button>
+      <button type="button" class="timer-btn" data-timer-set="120">120d</button>
+      <button type="button" class="timer-btn timer-toggle-btn" id="btn-timer-start-pause" aria-label="Mulai atau Jeda Timer">
+        Mulai
+      </button>
+      <button type="button" class="timer-btn timer-reset-btn" id="btn-timer-reset" aria-label="Reset Timer">
+        ↺
+      </button>
+    </div>
+  </aside>
+
+  <!-- ================= BOTTOM NAVIGATION ================= -->
+  <nav class="bottom-nav" aria-label="Navigasi Utama">
+    <button type="button" class="nav-item active" data-target="view-workout" id="nav-workout">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M6.5 6.5h11M6.5 17.5h11M3 10v4M21 10v4M6 8v8M18 8v8M9 12h6"/>
+      </svg>
+      <span>Latihan</span>
+    </button>
+
+    <button type="button" class="nav-item" data-target="view-history" id="nav-history">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/>
+      </svg>
+      <span>Riwayat</span>
+    </button>
+
+    <button type="button" class="nav-item" data-target="view-progress" id="nav-progress">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/>
+      </svg>
+      <span>Progres</span>
+    </button>
+
+    <button type="button" class="nav-item" data-target="view-settings" id="nav-settings">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+      </svg>
+      <span>Pengaturan</span>
+    </button>
+  </nav>
+
+  <!-- ================= MODAL TAMBAH GERAKAN ================= -->
+  <div class="modal-backdrop hidden" id="modal-add-exercise" role="dialog" aria-modal="true" aria-labelledby="modal-exercise-title">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3 id="modal-exercise-title">Tambah Gerakan Latihan</h3>
+        <button type="button" class="icon-btn" id="btn-close-modal" aria-label="Tutup">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label for="input-exercise-name">Nama Gerakan</label>
+          <input type="text" id="input-exercise-name" class="input-control" list="exercise-suggestions" placeholder="Contoh: Bench Press, Squat, Lat Pulldown..." autocomplete="off" />
+          <datalist id="exercise-suggestions">
+            <option value="Barbell Bench Press"></option>
+            <option value="Incline Dumbbell Press"></option>
+            <option value="Cable Chest Fly"></option>
+            <option value="Overhead Shoulder Press"></option>
+            <option value="Dumbbell Lateral Raise"></option>
+            <option value="Triceps Rope Pushdown"></option>
+            <option value="Lat Pulldown"></option>
+            <option value="Barbell Bent-Over Row"></option>
+            <option value="Seated Cable Row"></option>
+            <option value="Dumbbell Bicep Curl"></option>
+            <option value="Barbell Back Squat"></option>
+            <option value="Leg Press"></option>
+            <option value="Romanian Deadlift"></option>
+            <option value="Leg Extension"></option>
+            <option value="Standing Calf Raise"></option>
+          </datalist>
+        </div>
+
+        <div class="form-group">
+          <label for="select-muscle-group">Kelompok Otot</label>
+          <select id="select-muscle-group" class="input-control">
+            <option value="Chest">Chest (Dada)</option>
+            <option value="Back">Back (Punggung)</option>
+            <option value="Shoulders">Shoulders (Bahu)</option>
+            <option value="Biceps">Biceps</option>
+            <option value="Triceps">Triceps</option>
+            <option value="Legs">Legs (Kaki)</option>
+            <option value="Core">Core / Abs</option>
+          </select>
+        </div>
+
+        <button type="button" class="btn btn-primary btn-block" id="btn-confirm-add-exercise">
+          Tambahkan ke Sesi
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Notification -->
+  <div class="toast-container" id="toast-container" aria-live="polite"></div>
+
+  <!-- Scripts (Urutan sesuai dependensi modul) -->
+  <script src="./js/storage.js"></script>
+  <script src="./js/timer.js"></script>
+  <script src="./js/tracker.js"></script>
+  <script src="./js/ui.js"></script>
+  <script src="./js/app.js"></script>
+</body>
+</html>
