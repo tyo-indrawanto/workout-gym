@@ -1,0 +1,1045 @@
+/* ==========================================================================
+   1. VARIABEL TEMA & PALET WARNA (GELAP / TERANG + BULKING / DIET)
+   ========================================================================== */
+:root {
+  /* Warna Semantik Tetap */
+  --color-bulking: #F59E0B;
+  --color-bulking-soft: rgba(245, 158, 11, 0.14);
+  --color-diet: #0EA5E9;
+  --color-diet-soft: rgba(14, 165, 233, 0.14);
+  --color-success: #10B981;
+  --color-success-soft: rgba(16, 185, 129, 0.15);
+  --color-timer: #6366F1;
+  --color-timer-soft: rgba(99, 102, 241, 0.15);
+  --color-danger: #F43F5E;
+  --color-danger-soft: rgba(244, 63, 94, 0.14);
+
+  /* Aksen Aktif Default (Bulking) */
+  --accent: var(--color-bulking);
+  --accent-soft: var(--color-bulking-soft);
+  --accent-contrast: #0F172A;
+
+  /* Radius & Bayangan */
+  --radius-sm: 8px;
+  --radius-md: 14px;
+  --radius-lg: 20px;
+  --radius-full: 9999px;
+  --transition: 0.2s ease;
+}
+
+/* Override Aksen Saat Mode Diet Aktif */
+html[data-program="diet"] {
+  --accent: var(--color-diet);
+  --accent-soft: var(--color-diet-soft);
+  --accent-contrast: #FFFFFF;
+}
+
+/* Mode Gelap (Default) */
+html[data-theme="dark"] {
+  --bg-app: #0B1120;
+  --bg-surface: #131C31;
+  --bg-surface-elevated: #1C2842;
+  --bg-input: #0F172A;
+  --border-subtle: rgba(148, 163, 184, 0.16);
+  --border-strong: rgba(148, 163, 184, 0.28);
+  --text-primary: #F8FAFC;
+  --text-secondary: #94A3B8;
+  --text-muted: #64748B;
+  --shadow-card: 0 8px 24px rgba(0, 0, 0, 0.28);
+  --shadow-float: 0 10px 28px rgba(0, 0, 0, 0.45);
+}
+
+/* Mode Terang */
+html[data-theme="light"] {
+  --bg-app: #F1F5F9;
+  --bg-surface: #FFFFFF;
+  --bg-surface-elevated: #F8FAFC;
+  --bg-input: #F1F5F9;
+  --border-subtle: rgba(15, 23, 42, 0.09);
+  --border-strong: rgba(15, 23, 42, 0.18);
+  --text-primary: #0F172A;
+  --text-secondary: #475569;
+  --text-muted: #64748B;
+  --shadow-card: 0 6px 18px rgba(15, 23, 42, 0.06);
+  --shadow-float: 0 10px 24px rgba(15, 23, 42, 0.14);
+}
+
+/* ==========================================================================
+   2. RESET & DASAR TIPOGRAFI
+   ========================================================================== */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  -webkit-tap-highlight-color: transparent;
+}
+
+html,
+body {
+  background-color: var(--bg-app);
+  color: var(--text-primary);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+  font-size: 15px;
+  line-height: 1.5;
+  min-height: 100vh;
+  transition: background-color var(--transition), color var(--transition);
+}
+
+button,
+input,
+select {
+  font-family: inherit;
+  color: inherit;
+}
+
+button {
+  cursor: pointer;
+  border: none;
+  background: none;
+}
+
+svg {
+  flex-shrink: 0;
+}
+
+.hidden {
+  display: none !important;
+}
+
+.muted-text {
+  color: var(--text-muted);
+  font-size: 0.9rem;
+}
+
+.text-danger {
+  color: var(--color-danger);
+}
+
+/* ==========================================================================
+   3. HEADER & SWITCHER PROGRAM (BULKING VS DIET)
+   ========================================================================== */
+.app-header {
+  position: sticky;
+  top: 0;
+  z-index: 30;
+  background-color: var(--bg-surface);
+  border-bottom: 1px solid var(--border-subtle);
+  padding: 12px 16px 14px;
+  box-shadow: var(--shadow-card);
+  transition: background-color var(--transition), border-color var(--transition);
+}
+
+.header-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  max-width: 720px;
+  margin: 0 auto 12px;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+}
+
+.brand-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: var(--radius-md);
+  background: var(--accent-soft);
+  color: var(--accent);
+  border: 1px solid var(--accent);
+  display: grid;
+  place-items: center;
+  transition: all var(--transition);
+}
+
+.brand-icon svg {
+  width: 22px;
+  height: 22px;
+}
+
+.brand-title {
+  font-size: 1.15rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  line-height: 1.15;
+}
+
+.offline-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: var(--color-success);
+  margin-top: 2px;
+}
+
+.status-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: var(--radius-full);
+  background-color: var(--color-success);
+  box-shadow: 0 0 8px var(--color-success);
+}
+
+.icon-btn {
+  width: 38px;
+  height: 38px;
+  border-radius: var(--radius-full);
+  background-color: var(--bg-input);
+  border: 1px solid var(--border-subtle);
+  display: grid;
+  place-items: center;
+  color: var(--text-primary);
+  transition: transform 0.15s ease, background-color var(--transition);
+}
+
+.icon-btn:active {
+  transform: scale(0.94);
+}
+
+.icon-btn svg {
+  width: 19px;
+  height: 19px;
+}
+
+/* Tampilan Ikon Matahari / Bulan sesuai Tema */
+html[data-theme="dark"] .icon-moon {
+  display: none;
+}
+html[data-theme="light"] .icon-sun {
+  display: none;
+}
+
+/* Switcher Program */
+.program-switcher {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  max-width: 720px;
+  margin: 0 auto;
+  background-color: var(--bg-input);
+  padding: 4px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-subtle);
+}
+
+.program-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  padding: 8px 10px;
+  border-radius: var(--radius-sm);
+  font-size: 0.84rem;
+  font-weight: 700;
+  color: var(--text-secondary);
+  transition: all var(--transition);
+}
+
+.program-btn svg {
+  width: 16px;
+  height: 16px;
+}
+
+.program-btn[data-program-choice="bulking"].active {
+  background-color: var(--color-bulking-soft);
+  color: var(--color-bulking);
+  border: 1px solid rgba(245, 158, 11, 0.45);
+}
+
+.program-btn[data-program-choice="diet"].active {
+  background-color: var(--color-diet-soft);
+  color: var(--color-diet);
+  border: 1px solid rgba(14, 165, 233, 0.45);
+}
+
+/* ==========================================================================
+   4. KONTEN UTAMA & BANNER PROGRAM
+   ========================================================================== */
+.app-main {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 14px 16px 150px; /* Ruang ekstra di bawah untuk Rest Timer & Bottom Nav */
+}
+
+.program-banner {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 14px;
+  border-radius: var(--radius-md);
+  background: var(--accent-soft);
+  border-left: 4px solid var(--accent);
+  margin-bottom: 14px;
+  transition: all var(--transition);
+}
+
+.banner-icon {
+  width: 34px;
+  height: 34px;
+  border-radius: var(--radius-sm);
+  background-color: var(--accent);
+  color: var(--accent-contrast);
+  display: grid;
+  place-items: center;
+}
+
+.banner-icon svg {
+  width: 18px;
+  height: 18px;
+}
+
+.banner-text strong {
+  display: block;
+  font-size: 0.88rem;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.banner-text p {
+  font-size: 0.78rem;
+  color: var(--text-secondary);
+  line-height: 1.35;
+}
+
+/* Tab View */
+.tab-view {
+  display: none;
+  animation: fadeIn 0.2s ease;
+}
+
+.tab-view.active {
+  display: block;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* ==========================================================================
+   5. KARTU, FORM & TOMBOL
+   ========================================================================== */
+.card {
+  background-color: var(--bg-surface);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-lg);
+  padding: 16px;
+  margin-bottom: 14px;
+  box-shadow: var(--shadow-card);
+  transition: background-color var(--transition), border-color var(--transition);
+}
+
+.card-header-row,
+.section-header-flex {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+
+.section-title {
+  font-size: 1rem;
+  font-weight: 700;
+}
+
+.card-desc {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  margin-bottom: 14px;
+}
+
+.date-pill {
+  font-size: 0.75rem;
+  font-weight: 700;
+  padding: 4px 10px;
+  border-radius: var(--radius-full);
+  background-color: var(--bg-surface-elevated);
+  color: var(--text-secondary);
+  border: 1px solid var(--border-subtle);
+}
+
+.form-group {
+  margin-bottom: 12px;
+}
+
+.form-group label {
+  display: block;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+  margin-bottom: 5px;
+}
+
+.input-control {
+  width: 100%;
+  padding: 10px 12px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border-strong);
+  background-color: var(--bg-input);
+  color: var(--text-primary);
+  font-size: 0.92rem;
+  transition: border-color var(--transition), box-shadow var(--transition);
+}
+
+.input-control:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--accent-soft);
+}
+
+.input-sm {
+  width: auto;
+  padding: 6px 10px;
+  font-size: 0.82rem;
+}
+
+.action-bar-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-top: 6px;
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  padding: 11px 14px;
+  border-radius: var(--radius-md);
+  font-size: 0.88rem;
+  font-weight: 700;
+  transition: transform 0.14s ease, opacity 0.15s ease, background-color var(--transition);
+}
+
+.btn:active {
+  transform: scale(0.97);
+}
+
+.btn svg {
+  width: 17px;
+  height: 17px;
+}
+
+.btn-sm {
+  padding: 9px 11px;
+  font-size: 0.82rem;
+}
+
+.btn-block {
+  width: 100%;
+}
+
+.btn-primary {
+  background-color: var(--accent);
+  color: var(--accent-contrast);
+}
+
+.btn-secondary {
+  background-color: var(--bg-surface-elevated);
+  color: var(--text-primary);
+  border: 1px solid var(--border-strong);
+}
+
+.btn-success {
+  background-color: var(--color-success);
+  color: #FFFFFF;
+}
+
+.btn-danger {
+  background-color: var(--color-danger-soft);
+  color: var(--color-danger);
+  border: 1px solid rgba(244, 63, 94, 0.35);
+}
+
+/* ==========================================================================
+   6. LIVE STATS & KARTU GERAKAN (WORKOUT)
+   ========================================================================== */
+.live-stats-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+  margin-bottom: 14px;
+}
+
+.stat-chip {
+  background-color: var(--bg-surface);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  padding: 10px;
+  text-align: center;
+}
+
+.stat-label {
+  display: block;
+  font-size: 0.72rem;
+  color: var(--text-secondary);
+  font-weight: 600;
+}
+
+.stat-value {
+  font-size: 1.02rem;
+  font-weight: 800;
+  color: var(--accent);
+}
+
+.exercise-card {
+  background-color: var(--bg-surface);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-lg);
+  padding: 14px;
+  margin-bottom: 12px;
+  box-shadow: var(--shadow-card);
+}
+
+.exercise-card-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+
+.exercise-name {
+  font-size: 1rem;
+  font-weight: 800;
+}
+
+.muscle-tag {
+  display: inline-block;
+  font-size: 0.7rem;
+  font-weight: 700;
+  padding: 2px 8px;
+  border-radius: var(--radius-full);
+  background-color: var(--accent-soft);
+  color: var(--accent);
+  margin-top: 3px;
+}
+
+.prev-best-hint {
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+  background-color: var(--bg-surface-elevated);
+  padding: 6px 10px;
+  border-radius: var(--radius-sm);
+  margin-bottom: 10px;
+  border-left: 3px solid var(--color-timer);
+}
+
+.set-row {
+  display: grid;
+  grid-template-columns: 44px 1fr 1fr auto;
+  align-items: center;
+  gap: 8px;
+  padding: 8px;
+  border-radius: var(--radius-sm);
+  background-color: var(--bg-input);
+  border: 1px solid var(--border-subtle);
+  margin-bottom: 8px;
+}
+
+.set-row.is-pr {
+  border-color: var(--color-success);
+  background-color: var(--color-success-soft);
+}
+
+.set-num {
+  font-size: 0.78rem;
+  font-weight: 800;
+  text-align: center;
+  color: var(--text-secondary);
+}
+
+.set-input-box {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  background-color: var(--bg-surface);
+  border: 1px solid var(--border-subtle);
+  border-radius: 6px;
+  padding: 4px 8px;
+}
+
+.set-input-box input {
+  width: 100%;
+  border: none;
+  background: transparent;
+  font-size: 0.92rem;
+  font-weight: 700;
+  text-align: center;
+}
+
+.set-input-box input:focus {
+  outline: none;
+}
+
+.set-unit {
+  font-size: 0.72rem;
+  color: var(--text-muted);
+  font-weight: 700;
+}
+
+.set-actions {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.pr-badge {
+  font-size: 0.66rem;
+  font-weight: 800;
+  padding: 2px 6px;
+  border-radius: var(--radius-full);
+  background-color: var(--color-success);
+  color: #FFFFFF;
+  text-transform: uppercase;
+}
+
+.btn-icon-mini {
+  width: 28px;
+  height: 28px;
+  border-radius: 6px;
+  display: grid;
+  place-items: center;
+  font-size: 0.85rem;
+  color: var(--color-danger);
+  background-color: var(--color-danger-soft);
+}
+
+.btn-add-set {
+  width: 100%;
+  margin-top: 4px;
+  padding: 8px;
+  border-radius: var(--radius-sm);
+  border: 1px dashed var(--border-strong);
+  color: var(--text-secondary);
+  font-size: 0.82rem;
+  font-weight: 700;
+}
+
+.btn-add-set:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+.empty-state {
+  text-align: center;
+  padding: 36px 20px;
+  background-color: var(--bg-surface);
+  border: 1px dashed var(--border-strong);
+  border-radius: var(--radius-lg);
+  color: var(--text-secondary);
+}
+
+.empty-state svg {
+  width: 44px;
+  height: 44px;
+  margin-bottom: 10px;
+  color: var(--accent);
+}
+
+.empty-state h3 {
+  font-size: 1rem;
+  color: var(--text-primary);
+  margin-bottom: 4px;
+}
+
+.empty-state p {
+  font-size: 0.84rem;
+}
+
+/* ==========================================================================
+   7. RIWAYAT & PROGRES (GRAFIK BATANG)
+   ========================================================================== */
+.history-card {
+  background-color: var(--bg-surface);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-lg);
+  padding: 14px;
+  margin-bottom: 12px;
+  box-shadow: var(--shadow-card);
+}
+
+.history-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 6px;
+}
+
+.history-date {
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+  font-weight: 600;
+}
+
+.program-pill {
+  font-size: 0.7rem;
+  font-weight: 800;
+  padding: 2px 9px;
+  border-radius: var(--radius-full);
+  text-transform: uppercase;
+}
+
+.program-pill.bulking {
+  background-color: var(--color-bulking-soft);
+  color: var(--color-bulking);
+}
+
+.program-pill.diet {
+  background-color: var(--color-diet-soft);
+  color: var(--color-diet);
+}
+
+.history-title {
+  font-size: 1rem;
+  font-weight: 800;
+  margin-bottom: 8px;
+}
+
+.history-summary-line {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+  margin-bottom: 8px;
+}
+
+.history-exercises-preview {
+  font-size: 0.82rem;
+  color: var(--text-primary);
+  background-color: var(--bg-input);
+  padding: 8px 10px;
+  border-radius: var(--radius-sm);
+}
+
+.pr-highlight-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin: 14px 0;
+}
+
+.pr-card {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-subtle);
+  background-color: var(--bg-surface-elevated);
+}
+
+.pr-icon {
+  width: 36px;
+  height: 36px;
+  border-radius: var(--radius-sm);
+  display: grid;
+  place-items: center;
+}
+
+.pr-weight .pr-icon {
+  background-color: var(--color-success-soft);
+  color: var(--color-success);
+}
+
+.pr-volume .pr-icon {
+  background-color: var(--color-timer-soft);
+  color: var(--color-timer);
+}
+
+.pr-icon svg {
+  width: 19px;
+  height: 19px;
+}
+
+.pr-label {
+  display: block;
+  font-size: 0.72rem;
+  color: var(--text-secondary);
+}
+
+.pr-val {
+  font-size: 1.05rem;
+  font-weight: 800;
+}
+
+.chart-wrapper {
+  margin-top: 14px;
+}
+
+.chart-title {
+  font-size: 0.88rem;
+  font-weight: 700;
+  margin-bottom: 10px;
+  color: var(--text-secondary);
+}
+
+.bar-chart-container {
+  display: flex;
+  align-items: flex-end;
+  gap: 10px;
+  height: 170px;
+  padding: 14px 10px 8px;
+  background-color: var(--bg-input);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-subtle);
+  overflow-x: auto;
+}
+
+.bar-column {
+  flex: 1;
+  min-width: 46px;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 5px;
+}
+
+.bar-val {
+  font-size: 0.72rem;
+  font-weight: 800;
+  color: var(--text-primary);
+}
+
+.bar-fill {
+  width: 100%;
+  max-width: 34px;
+  border-radius: 6px 6px 2px 2px;
+  background: linear-gradient(180deg, var(--accent), var(--color-success));
+  min-height: 8px;
+  transition: height 0.3s ease;
+}
+
+.bar-label {
+  font-size: 0.68rem;
+  color: var(--text-muted);
+  white-space: nowrap;
+}
+
+/* ==========================================================================
+   8. PENGATURAN & CHIP PRESET
+   ========================================================================== */
+.settings-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.timer-preset-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.chip-btn {
+  padding: 8px 14px;
+  border-radius: var(--radius-full);
+  font-size: 0.82rem;
+  font-weight: 700;
+  background-color: var(--bg-input);
+  border: 1px solid var(--border-strong);
+  color: var(--text-secondary);
+  transition: all var(--transition);
+}
+
+.chip-btn.active {
+  background-color: var(--color-timer-soft);
+  border-color: var(--color-timer);
+  color: var(--color-timer);
+}
+
+/* ==========================================================================
+   9. FLOATING REST TIMER BAR & BOTTOM NAVIGATION
+   ========================================================================== */
+.rest-timer-bar {
+  position: fixed;
+  bottom: 64px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: calc(100% - 24px);
+  max-width: 696px;
+  z-index: 25;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 9px 12px;
+  border-radius: var(--radius-lg);
+  background-color: var(--bg-surface-elevated);
+  border: 1px solid rgba(99, 102, 241, 0.45);
+  box-shadow: var(--shadow-float);
+}
+
+.rest-timer-bar.running {
+  border-color: var(--color-timer);
+  box-shadow: 0 0 0 2px var(--color-timer-soft), var(--shadow-float);
+}
+
+.timer-display-group {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.timer-icon {
+  width: 22px;
+  height: 22px;
+  color: var(--color-timer);
+}
+
+.timer-label {
+  display: block;
+  font-size: 0.68rem;
+  color: var(--text-secondary);
+  font-weight: 600;
+  line-height: 1.1;
+}
+
+.timer-clock {
+  font-size: 1.05rem;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+  color: var(--text-primary);
+}
+
+.timer-controls {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.timer-btn {
+  padding: 6px 8px;
+  border-radius: var(--radius-sm);
+  font-size: 0.74rem;
+  font-weight: 800;
+  background-color: var(--bg-input);
+  border: 1px solid var(--border-subtle);
+  color: var(--text-secondary);
+}
+
+.timer-toggle-btn {
+  background-color: var(--color-timer);
+  color: #FFFFFF;
+  border-color: var(--color-timer);
+  padding: 6px 10px;
+}
+
+.bottom-nav {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 58px;
+  z-index: 30;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  background-color: var(--bg-surface);
+  border-top: 1px solid var(--border-subtle);
+}
+
+.nav-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: var(--text-muted);
+  transition: color var(--transition);
+}
+
+.nav-item svg {
+  width: 20px;
+  height: 20px;
+}
+
+.nav-item.active {
+  color: var(--accent);
+}
+
+/* ==========================================================================
+   10. MODAL & TOAST NOTIFICATION
+   ========================================================================== */
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  background-color: rgba(2, 6, 23, 0.72);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+}
+
+.modal-card {
+  width: 100%;
+  max-width: 440px;
+  background-color: var(--bg-surface);
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-lg);
+  padding: 16px;
+  box-shadow: var(--shadow-float);
+}
+
+.modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 14px;
+}
+
+.modal-header h3 {
+  font-size: 1.02rem;
+  font-weight: 800;
+}
+
+.toast-container {
+  position: fixed;
+  top: 72px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 60;
+  width: calc(100% - 32px);
+  max-width: 420px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  pointer-events: none;
+}
+
+.toast-item {
+  padding: 10px 14px;
+  border-radius: var(--radius-md);
+  background-color: var(--bg-surface-elevated);
+  color: var(--text-primary);
+  border: 1px solid var(--accent);
+  box-shadow: var(--shadow-float);
+  font-size: 0.84rem;
+  font-weight: 700;
+  text-align: center;
+  animation: fadeIn 0.2s ease;
+}
+
+/* Penyesuaian Layar Lebih Lebar (Tablet / Desktop) */
+@media (min-width: 640px) {
+  .app-main {
+    padding-top: 20px;
+  }
+  .bar-chart-container {
+    height: 200px;
+  }
+}
